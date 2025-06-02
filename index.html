@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>DAD BIRTHDAY EXPLOSION</title>
   <style>
     html, body {
@@ -10,7 +10,8 @@
       font-family: 'Comic Sans MS';
       background: black;
       color: #fff;
-      overflow-x: hidden;
+      overflow-x: hidden;  /* prevent horizontal scroll on all */
+      height: 100%;
     }
 
     body {
@@ -19,10 +20,9 @@
       animation: swirlBg 10s linear infinite;
       min-height: 200vh;
       text-align: center;
-      overflow-x: hidden;
-}
-
-    
+      overflow-x: hidden; /* redundant but safe */
+      position: relative; /* for absolutely positioned children */
+    }
 
     @keyframes swirlBg {
       0% { background-position: 0% 50%; }
@@ -84,24 +84,25 @@
       animation: pulse 1.5s infinite;
     }
 
- .tiny-dad {
-  width: 10vw;       /* 10% of viewport width */
-  max-width: 64px;   /* never bigger than 64px */
-  height: auto;
-  position: absolute;
-  top: -10vw;        /* match negative top to width for smooth start */
-  animation-name: fall;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  z-index: 999;
-}
+    .tiny-dad {
+      width: 40px;
+      height: auto;
+      position: absolute;
+      animation-name: fall;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      z-index: 999;
+      box-sizing: border-box;
+      user-select: none;
+      pointer-events: none;
+    }
 
-@keyframes fall {
-  0% { top: -64px; transform: rotate(0deg); }
-  100% { top: 110vh; transform: rotate(360deg); }
-}
+    @keyframes fall {
+      0% { top: -70vh; transform: rotate(0deg); }
+      100% { top: 70vh; transform: rotate(360deg); }
+    }
 
-    #rickrollVid {
+    #rickVideo {
       display: none;
       margin: 2em auto;
       max-width: 560px;
@@ -113,6 +114,7 @@
       color: #ff65a3;
       animation: fly 5s linear infinite;
       pointer-events: none;
+      user-select: none;
     }
 
     @keyframes fly {
@@ -127,12 +129,11 @@
     }
 
     @media (max-width: 400px) {
-  .tiny-dad {
-    width: 15vw;  /* even smaller on tiny phones */
-    top: -15vw;
-  }
-}
-
+      .tiny-dad {
+        width: 15vw;  /* smaller on tiny phones */
+        top: -15vw;
+      }
+    }
   </style>
 </head>
 <body>
@@ -141,13 +142,13 @@
   <p>birth.</p>
   <button onclick="unleashDad()">Unleash the Dad</button>
 
-  <img id="dadImage" src="funny-dad.jpg" alt="Funny Dad Picture">
+  <img id="dadImage" src="funny-dad.jpg" alt="Funny Dad Picture" />
   <p id="message">🔥 BOW DOWN 🔥</p>
 
- <video id="rickVideo" width="560" height="315" controls autoplay muted loop style="display:none; margin: 2em auto; border: 5px solid #ff65a3; border-radius: 15px;">
-  <source src="video.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+  <video id="rickVideo" width="560" height="315" controls autoplay muted loop style="display:none; margin: 2em auto; border: 5px solid #ff65a3; border-radius: 15px;">
+    <source src="video.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
 
   <button id="rickBtn" style="display:none;" onclick="showRickroll()">MORE</button>
 
@@ -159,70 +160,70 @@
 
   <script>
     function unleashDad() {
-  document.getElementById("dadImage").style.display = "block";
-  document.getElementById("message").style.display = "block";
-  document.getElementById("rickBtn").style.display = "inline-block";
+      document.getElementById("dadImage").style.display = "block";
+      document.getElementById("message").style.display = "block";
+      document.getElementById("rickBtn").style.display = "inline-block";
 
-  // Sound & music
-  document.getElementById("boomSound").play();
-  const music2 = document.getElementById("boomSound")
-  const music = document.getElementById("birthdayMusic");
-  music.volume = 0.05;
-  music2.volume = 0.2 // Set volume to 20%
-  music.play();
+      // Sound & music
+      document.getElementById("boomSound").play();
+      const music2 = document.getElementById("boomSound");
+      const music = document.getElementById("birthdayMusic");
+      music.volume = 0.05;
+      music2.volume = 0.2; // Set volume to 20%
+      music.play();
 
-  // Confetti
-  confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
+      // Confetti
+      confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
 
- for (let i = 0; i < 30; i++) {
-  let img = document.createElement("img");
-  img.src = "tiny-dad.jpg";
-  img.className = "tiny-dad";
+      // Rain tiny dads
+      for (let i = 0; i < 30; i++) {
+        let img = document.createElement("img");
+        img.src = "tiny-dad.jpg";
+        img.className = "tiny-dad";
 
-  document.body.appendChild(img);
+        // Calculate width dynamically (will be 40px on desktop, ~15vw on mobile)
+        // We can't measure exactly before appending, so use 40px as safe max width
+        const imgWidth = 40;
 
-  // Wait for image to load so we can get its actual rendered width
-  img.onload = () => {
-    const imgWidth = img.offsetWidth;
-    const maxLeftPx = window.innerWidth - imgWidth;
-    const leftPx = Math.random() * maxLeftPx;
-    img.style.left = leftPx + "px";
+        // Limit left position to middle 70% of viewport width,
+        // while making sure image stays fully inside viewport horizontally
+        const leftMin = window.innerWidth * 0.15;
+        const leftMax = window.innerWidth * 0.85 - imgWidth;
 
-    img.style.top = `-${imgWidth}px`;  // ensure it starts above screen with negative top same as width
+        // Clamp leftMax to be >= leftMin
+        const safeLeftMax = Math.max(leftMin, leftMax);
 
-    // Random animation duration between 3 and 6 seconds
-    img.style.animationDuration = (Math.random() * 3 + 3) + "s";
+        const leftPx = Math.random() * (safeLeftMax - leftMin) + leftMin;
+        img.style.left = leftPx + "px";
 
-    // Remove after animation ends (~8s)
-    setTimeout(() => img.remove(), 8000);
-  };
-}
+        // Random animation duration between 3 and 6 seconds
+        img.style.animationDuration = (Math.random() * 3 + 3) + "s";
 
+        document.body.appendChild(img);
 
+        // Remove after 8 seconds to keep DOM clean
+        setTimeout(() => img.remove(), 8000);
+      }
 
-
-
-  // Flying "Happy Birthday" text
-  for (let i = 0; i < 10; i++) {
-    let txt = document.createElement("div");
-    txt.className = "fly-text";
-    txt.innerText = "🎉 Happy Birthday 🎉";
-    txt.style.left = Math.random() * 100 + "vw";
-    txt.style.top = "100vh";
-    txt.style.animationDuration = (Math.random() * 4 + 4) + "s";
-    document.body.appendChild(txt);
-    setTimeout(() => txt.remove(), 8000);
-  }
-}
-
+      // Flying "Happy Birthday" text
+      for (let i = 0; i < 10; i++) {
+        let txt = document.createElement("div");
+        txt.className = "fly-text";
+        txt.innerText = "🎉 Happy Birthday 🎉";
+        txt.style.left = Math.random() * 100 + "vw";
+        txt.style.top = "100vh";
+        txt.style.animationDuration = (Math.random() * 4 + 4) + "s";
+        document.body.appendChild(txt);
+        setTimeout(() => txt.remove(), 8000);
+      }
+    }
 
     function showRickroll() {
-  const vid = document.getElementById('rickVideo');
-  vid.style.display = 'block';
-  vid.play();
-  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-}
-
+      const vid = document.getElementById('rickVideo');
+      vid.style.display = 'block';
+      vid.play();
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
   </script>
 </body>
 </html>
