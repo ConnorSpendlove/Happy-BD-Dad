@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DAD BIRTHDAY EXPLOSION</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Comic Sans MS', cursive;
+      background: black;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    body {
+      background: radial-gradient(circle, #ff7eb9, #7afcff, #feff9c, #fff740);
+      background-size: 300% 300%;
+      animation: swirlBg 10s linear infinite;
+      min-height: 200vh;
+      text-align: center;
+    }
+
+    @keyframes swirlBg {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      font-size: 4em;
+      margin-top: 1em;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); color: #fff740; }
+      50% { transform: scale(1.1); color: #ff65a3; }
+    }
+
+    p {
+      font-size: 1.5em;
+    }
+
+    button {
+      margin: 1em;
+      padding: 1em 2em;
+      font-size: 1.5em;
+      background: linear-gradient(45deg, #54428e, #1e0a74);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      animation: wiggle 1s infinite;
+    }
+
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(-1deg); }
+      50% { transform: rotate(1deg); }
+    }
+
+    #dadImage {
+      display: none;
+      margin: 2em auto;
+      border: 12px dashed #fff740;
+      border-radius: 50%;
+      max-width: 400px;
+      animation: spinAndPulse 5s infinite linear;
+    }
+
+    @keyframes spinAndPulse {
+      0% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
+      50% { transform: rotate(180deg) scale(1.1); filter: hue-rotate(180deg); }
+      100% { transform: rotate(360deg) scale(1); filter: hue-rotate(360deg); }
+    }
+
+    #message {
+      font-size: 2em;
+      margin-top: 2em;
+      display: none;
+      animation: pulse 1.5s infinite;
+    }
+
+    .tiny-dad {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      animation: fall 5s linear infinite;
+      z-index: 999;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-100px) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(360deg); }
+    }
+
+    #rickrollVid {
+      display: none;
+      margin: 2em auto;
+      max-width: 560px;
+    }
+
+    .fly-text {
+      position: absolute;
+      font-size: 2em;
+      color: #ff65a3;
+      animation: fly 5s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes fly {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-200px) rotate(720deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎂 DAD BIRTHDAY 🎂</h1>
+  <p>birth.</p>
+  <button onclick="unleashDad()">Unleash the Dad</button>
+
+  <img id="dadImage" src="funny-dad.jpg" alt="Funny Dad Picture">
+  <p id="message">🔥 BOW DOWN 🔥</p>
+
+  <div id="rickrollVid">
+    <iframe width="560" height="315" src="https://www.youtube.com/watch?v=dQw4w9WgXcQautoplay=1" title="Rickroll"
+      frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
+  </div>
+
+  <button id="rickBtn" style="display:none;" onclick="showRickroll()">MORE</button>
+
+  <audio id="boomSound" src="vineboom.mp3" preload="auto"></audio>
+  <audio id="birthdayMusic" src="happy-birthday.mp3" loop preload="auto"></audio>
+
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    function unleashDad() {
+  document.getElementById("dadImage").style.display = "block";
+  document.getElementById("message").style.display = "block";
+  document.getElementById("rickBtn").style.display = "inline-block";
+
+  // Sound & music
+  document.getElementById("boomSound").play();
+  const music2 = document.getElementById("boomSound")
+  const music = document.getElementById("birthdayMusic");
+  music.volume = 0.1;
+  music2.volume = 0.2 // Set volume to 20%
+  music.play();
+
+  // Confetti
+  confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
+
+  // Rain tiny dads
+  // Rain tiny dads
+for (let i = 0; i < 30; i++) {
+  let img = document.createElement("img");
+  img.src = "tiny-dad.jpg";
+  img.className = "tiny-dad";
+  img.style.left = Math.random() * 100 + "vw";
+  img.style.top = "-100px"; // Make sure they start off-screen
+  img.style.animationDuration = (Math.random() * 3 + 3) + "s";
+  document.body.appendChild(img);
+  setTimeout(() => img.remove(), 8000);
+}
+
+
+  // Flying "Happy Birthday" text
+  for (let i = 0; i < 10; i++) {
+    let txt = document.createElement("div");
+    txt.className = "fly-text";
+    txt.innerText = "🎉 Happy Birthday 🎉";
+    txt.style.left = Math.random() * 100 + "vw";
+    txt.style.top = "100vh";
+    txt.style.animationDuration = (Math.random() * 4 + 4) + "s";
+    document.body.appendChild(txt);
+    setTimeout(() => txt.remove(), 8000);
+  }
+}
+
+
+    function showRickroll() {
+      document.getElementById("rickrollVid").style.display = "block";
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
