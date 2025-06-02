@@ -19,7 +19,10 @@
       animation: swirlBg 10s linear infinite;
       min-height: 200vh;
       text-align: center;
-    }
+      overflow-x: hidden;
+}
+
+    
 
     @keyframes swirlBg {
       0% { background-position: 0% 50%; }
@@ -81,18 +84,22 @@
       animation: pulse 1.5s infinite;
     }
 
-    .tiny-dad {
-      position: absolute;
-      width: 64px;
-      height: 64px;
-      animation: fall 5s linear infinite;
-      z-index: 999;
-    }
+ .tiny-dad {
+  width: 10vw;       /* 10% of viewport width */
+  max-width: 64px;   /* never bigger than 64px */
+  height: auto;
+  position: absolute;
+  top: -10vw;        /* match negative top to width for smooth start */
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  z-index: 999;
+}
 
-    @keyframes fall {
-      0% { transform: translateY(-100px) rotate(0deg); }
-      100% { transform: translateY(100vh) rotate(360deg); }
-    }
+@keyframes fall {
+  0% { top: -64px; transform: rotate(0deg); }
+  100% { top: 110vh; transform: rotate(360deg); }
+}
 
     #rickrollVid {
       display: none;
@@ -118,6 +125,14 @@
         opacity: 0;
       }
     }
+
+    @media (max-width: 400px) {
+  .tiny-dad {
+    width: 15vw;  /* even smaller on tiny phones */
+    top: -15vw;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -159,18 +174,32 @@
   // Confetti
   confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
 
-  // Rain tiny dads
-  // Rain tiny dads
-for (let i = 0; i < 30; i++) {
+ for (let i = 0; i < 30; i++) {
   let img = document.createElement("img");
   img.src = "tiny-dad.jpg";
   img.className = "tiny-dad";
-  img.style.left = Math.random() * 100 + "vw";
-  img.style.top = "-100px"; // Make sure they start off-screen
-  img.style.animationDuration = (Math.random() * 3 + 3) + "s";
+
   document.body.appendChild(img);
-  setTimeout(() => img.remove(), 8000);
+
+  // Wait for image to load so we can get its actual rendered width
+  img.onload = () => {
+    const imgWidth = img.offsetWidth;
+    const maxLeftPx = window.innerWidth - imgWidth;
+    const leftPx = Math.random() * maxLeftPx;
+    img.style.left = leftPx + "px";
+
+    img.style.top = `-${imgWidth}px`;  // ensure it starts above screen with negative top same as width
+
+    // Random animation duration between 3 and 6 seconds
+    img.style.animationDuration = (Math.random() * 3 + 3) + "s";
+
+    // Remove after animation ends (~8s)
+    setTimeout(() => img.remove(), 8000);
+  };
 }
+
+
+
 
 
   // Flying "Happy Birthday" text
