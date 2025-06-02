@@ -129,11 +129,10 @@
   <img id="dadImage" src="funny-dad.jpg" alt="Funny Dad Picture">
   <p id="message">🔥 BOW DOWN 🔥</p>
 
-  <div id="rickrollVid">
-    <iframe width="560" height="315" src="https://www.youtube.com/watch?v=dQw4w9WgXcQautoplay=1" title="Rickroll"
-      frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen></iframe>
-  </div>
+ <video id="rickVideo" width="560" height="315" controls autoplay muted loop style="display:none; margin: 2em auto; border: 5px solid #ff65a3; border-radius: 15px;">
+  <source src="video.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
   <button id="rickBtn" style="display:none;" onclick="showRickroll()">MORE</button>
 
@@ -153,7 +152,7 @@
   document.getElementById("boomSound").play();
   const music2 = document.getElementById("boomSound")
   const music = document.getElementById("birthdayMusic");
-  music.volume = 0.1;
+  music.volume = 0.05;
   music2.volume = 0.2 // Set volume to 20%
   music.play();
 
@@ -189,9 +188,12 @@ for (let i = 0; i < 30; i++) {
 
 
     function showRickroll() {
-      document.getElementById("rickrollVid").style.display = "block";
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    }
+  const vid = document.getElementById('rickVideo');
+  vid.style.display = 'block';
+  vid.play();
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
   </script>
 </body>
 </html>
